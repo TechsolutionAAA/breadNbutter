@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const axios = require("axios");
+
 const Wallet = require("ethereumjs-wallet");
 
 const { ethers } = require("ethers");
@@ -30,5 +32,18 @@ exports.metajson = async (req, res) => {
 
     let tokenURI = await Contract.tokenURI(req.params.id);
 
-    res.status(200).json(tokenURI);
+    const tokenuri = tokenURI.replace(":/", "");
+
+    const response = await ipfs_url_from_hash(tokenuri);
+
+    // let resp = await axios.get(response);
+    // console.log(resp.data)
+    // console.log(JSON.parse(resp.data))
+    // console.log(JSON.parse(data).image)
+
+    res.status(200).json({ "tokenURI": tokenURI, "TokenJSON": response });
+}
+
+function ipfs_url_from_hash(h) {
+    return "https://ipfs.io/" + h;
 }
